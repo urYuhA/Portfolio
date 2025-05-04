@@ -48,6 +48,71 @@
             </div>
             <button>登録する</button>
         </form>
+
+        <form action="regist_form.html">
+            <fieldset>
+                <legend>好きなスポーツ</legend>
+                <input type="radio" name="marathon" id="funnymarathon" value="funnymarathon" checked>
+                <label for="funnymarathon">楽しく走ろう5km</label><br>
+                <input type="radio" name="marathon" id="halfmarathon" value="halfmarathon">
+                <label for="halfmarathon">ハーフマラソン</label><br>
+                <input type="radio" name="marathon" id="fullmarathon" value="fullmarathon">
+                <label for="fullmarathon">フルマラソン</label>
+            </fieldset>
+        </form>
+        <form action="/submit" method="post">
+            <!-- ユーザー情報入力 -->
+            <fieldset>
+                <legend>ユーザー情報</legend>
+
+                <label for="username">名前:</label>
+                <input type="text" id="username" name="username" required><br><br>
+
+                <label for="email">メールアドレス:</label>
+                <input type="email" id="email" name="email" required><br><br>
+
+                <label for="password">パスワード:</label>
+                <input type="password" id="password" name="password" required>
+            </fieldset>
+
+            <!-- <br> -->
+
+            <!-- 好きなスポーツ選択 -->
+            <fieldset>
+                <legend>好きなスポーツを選んでください</legend>
+
+                <label>
+                    <input type="radio" name="sport" value="basketball" required> バスケ
+                </label><br>
+
+                <label>
+                    <input type="radio" name="sport" value="soccer"> サッカー
+                </label><br>
+
+                <label>
+                    <input type="radio" name="sport" value="tennis"> テニス
+                </label>
+            </fieldset>
+
+            <!-- <br> -->
+
+            <!-- 年代選択 -->
+            <fieldset>
+                <legend>年代</legend>
+
+                <label for="age">年代を選んでください:</label>
+                <select id="age" name="age" required>
+                    <option value="">選択してください</option>
+                    <option value="under18">18歳以下</option>
+                    <option value="18andover">18歳以上</option>
+                </select>
+            </fieldset>
+
+            <!-- <br> -->
+
+            <!-- 送信ボタン -->
+            <button type="submit">送信</button>
+        </form>
     </main>
 </body>
 
