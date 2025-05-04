@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <header>
+        <h1>マラソン申し込みフォーム</h1>
+    </header>
+
+    <main>
+        <form action="regist_form.html">
+            <div>
+                <label for="lastname">姓</label>
+                <input type="text" name=lastname" id="lastname" placeholder="姓" required>
+                <label for="firstname">名</label>
+                <input type="text" name="firstname" id="firstname" placeholder="名" required>
+            </div>
+            <div>
+                <p>
+                <h2>参加するマラソンを選択</h2>
+                </p>
+                <input type="radio" name="marathon" id="funnymarathon" value="funnymarathon" checked>
+                <label for="funnymarathon">楽しく走ろう5km</label><br>
+                <input type="radio" name="marathon" id="halfmarathon" value="halfmarathon">
+                <label for="halfmarathon">ハーフマラソン</label><br>
+                <input type="radio" name="marathon" id="fullmarathon" value="fullmarathon">
+                <label for="fullmarathon">フルマラソン</label>
+            </div>
+            <div>
+                <label for="mail">メールアドレス</label>
+                <input type="email" name="mail" id="mail" required>
+                <label for="password">パスワード</label>
+                <input type="password" name="password" id="password" required>
+            </div>
+            <div>
+                <label for="era">参加する年代</label>
+                <select name="era" id="era">
+                    <option value="undereighteen">-18</option>
+                    <option value="eighteentothirty">18-30</option>
+                    <option value="thirtytofifty">30-50</option>
+                    <option value="morefifty">50+</option>
+                </select>
+            </div>
+            <button>登録する</button>
+        </form>
+    </main>
+</body>
+
+</html>
