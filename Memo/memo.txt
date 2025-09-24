@@ -1,0 +1,7 @@
+#実行指示:
+現在、"headlessUI"の"Listbox"、"ListboxButton"、"ListboxOption"、"ListboxOptions"を利用して、プルダウンメニューの共通コンポーネントを作成しようとしています。
+[#プルダウンメニュー共通コンポーネント条件]を全て満たすプルダウンの共通コンポーネントを作成してください。
+
+#プルダウンメニュー共通コンポーネント条件:
+- 引数の"Props"として渡したい変数として、プルダウンメニューで選択する要素の配列を渡します。"const　Items = [{id:1,name:"要素1"},{id:2,name:"要素2"}]"のようなオブジェクトの並列を渡します。
+- 選択されたプルダウンを保持するための"useState"を渡します。"const [selectedItem,setSelectedItem] = useState(Items[0])"のような"useState"を渡し、常に親要素は何を選択したかわかるようにします。

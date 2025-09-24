@@ -1,0 +1,127 @@
+// app/components/CsvBlobToTable.tsx
+"use client";
+import { useMemo, useState } from "react";
+
+/** カンマ/改行/クオート("…", ""=エスケープ)対応の軽量CSVパーサ */
+function parseCSV(text: string, delimiter = ","): string[][] {
+  const rows: string[][] = [];
+  let row: string[] = [];
+  let field = "";
+  let inQuotes = false;
+
+  const pushField = () => { row.push(field); field = ""; };
+  const pushRow = () => { rows.push(row); row = []; };
+
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (c === '"') {
+      if (inQuotes && text[i + 1] === '"') { field += '"'; i++; } // "" → "
+      else { inQuotes = !inQuotes; }
+      continue;
+    }
+    if (!inQuotes && c === delimiter) { pushField(); continue; }
+    if (!inQuotes && (c === "\n" || c === "\r")) {
+      if (c === "\r" && text[i + 1] === "\n") i++; // CRLF
+      pushField(); pushRow(); continue;
+    }
+    field += c;
+  }
+  pushField(); pushRow();
+
+  // 末尾が完全な空行なら削除
+  if (rows.length && rows[rows.length - 1].every(v => v === "")) rows.pop();
+  return rows;
+}
+
+export default function CsvBlobToTable() {
+  // 仕様：ヘッダー込みで5行。列数は可変に対応（例は2列: x1,x2）
+  const csvText = `x1,x2
+1,10
+2,20
+3,30
+4,40`;
+
+  // ★「オンメモリ上にダウンロードされたCSV」を Blob として保持
+  //   （実運用では fetch(...).blob() の戻り値を使えば同じ挙動になります）
+  const blob = useMemo(
+    () => new Blob([csvText], { type: "text/csv" }),
+    [csvText]
+  );
+
+  const [table, setTable] = useState<string[][] | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  const handleLoad = () => {
+    setLoading(true);
+    setErr(null);
+
+    // ★ FileReader で Blob をテキスト化（UTF-8）。必要なら "Shift_JIS" などを指定
+    const reader = new FileReader();
+    reader.onerror = () => {
+      setLoading(false);
+      setErr("CSVの読み込みに失敗しました。");
+    };
+    reader.onload = () => {
+      try {
+        const text = String(reader.result ?? "");
+        const rows = parseCSV(text, ","); // ← ヘッダー込みの2次元配列に
+        setTable(rows);
+      } catch (e: any) {
+        setErr(e?.message ?? "CSVの解析に失敗しました。");
+      } finally {
+        setLoading(false);
+      }
+    };
+    reader.readAsText(blob, "UTF-8");
+  };
+
+  // 表示用：列数可変対応（最大列数を採用し、不足は空文字で埋める）
+  const headers: string[] = (() => {
+    if (!table || table.length === 0) return [];
+    const width = Math.max(...table.map(r => r.length));
+    const h0 = table[0] ?? [];
+    return Array.from({ length: width }, (_, i) => h0[i] ?? `col_${i + 1}`);
+  })();
+
+  return (
+    <main className="p-6 space-y-4">
+      <button
+        onClick={handleLoad}
+        disabled={loading}
+        className="rounded bg-blue-600 px-4 py-2 text-white disabled:opacity-50"
+      >
+        {loading ? "読み込み中..." : "CSVを読み込んで表示"}
+      </button>
+
+      {err && <div className="text-sm text-red-700">{err}</div>}
+
+      {table && table.length > 0 && (
+        <div className="max-h-80 overflow-auto rounded border">
+          <table className="w-full table-fixed border-collapse text-sm">
+            <thead className="sticky top-0 bg-white">
+              <tr>
+                {headers.map((h, i) => (
+                  <th key={i} className="border border-gray-200 px-3 py-2 text-left font-semibold">
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {table.slice(1).map((row, ri) => (
+                <tr key={ri} className="odd:bg-gray-50">
+                  {headers.map((_, ci) => (
+                    <td key={ci} className="border border-gray-200 px-3 py-2 whitespace-pre">
+                      {row[ci] ?? ""} {/* 欠けは空表示 */}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </main>
+  );
+}
